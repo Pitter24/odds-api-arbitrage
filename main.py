@@ -1,7 +1,7 @@
 import requests
 from utils import *
+from constants import API_KEY
 
-API_KEY = ''
 SPORT = 'upcoming'  # use the sport_key from the /sports endpoint below, or use 'upcoming' to see the next 8 games across all sports
 REGIONS = 'eu'  # uk | us | eu | au. Multiple can be specified if comma delimited
 MARKETS = 'h2h'  # h2h | spreads | totals. Multiple can be specified if comma delimited
