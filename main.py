@@ -1,8 +1,7 @@
 import requests
-import json
 from utils import *
 
-API_KEY = 'd28f706be687099bd6250567f7a047d5'
+API_KEY = ''
 SPORT = 'upcoming'  # use the sport_key from the /sports endpoint below, or use 'upcoming' to see the next 8 games across all sports
 REGIONS = 'eu'  # uk | us | eu | au. Multiple can be specified if comma delimited
 MARKETS = 'h2h'  # h2h | spreads | totals. Multiple can be specified if comma delimited
@@ -12,7 +11,7 @@ DATE_FORMAT = 'iso'  # iso | unix
 
 def arb(odds, stake=100):
     """
-    Takes in the JSON API request and calculutes if there are any arbitrage opportunites. It looks for arbitrage in the current LIVE
+    Takes in the JSON API request and calculates if there are any arbitrage opportunities. It looks for arbitrage in the current LIVE
     events and the 8 closest upcoming events from all the sports and bookies supported by the https://the-odds-api.com/.
 
         Parameters:
@@ -20,7 +19,7 @@ def arb(odds, stake=100):
             odds (dict): JSON dictionary returned from API call with all the betting data
 
         Returns:
-            arb_list (list[dict]): list of dictionaries for each sports event in which arbitrage is possible with bookies, odds,
+            arb_list (list[dict]): list of dictionaries for each sport event in which arbitrage is possible with bookies, odds,
                                     payoff and betting strategy
     """
     arb_matrices = create_arb_matrices(odds)
@@ -35,8 +34,8 @@ def arb(odds, stake=100):
 
 
 def get_odds():
-    global odds_json
-    odds_response = requests.get(f"https://api.the-odds-api.com/v4/sports/{SPORT}/odds", params={
+
+    odd_response = requests.get(f"https://api.the-odds-api.com/v4/sports/{SPORT}/odds", params={
         'api_key': API_KEY,
         'regions': REGIONS,
         'markets': MARKETS,
@@ -44,33 +43,11 @@ def get_odds():
         'dateFormat': DATE_FORMAT,
     })
 
-    if odds_response.status_code != 200:
+    if odd_response.status_code != 200:
         print(
-            f'Failed to get odds: status_code {odds_response.status_code}, response body {odds_response.text}')
+            f'Failed to get odds: status_code {odd_response.status_code}, response body {odd_response.text}')
+        return
 
     else:
-        odds_json = odds_response.json()
-        print('Made the Request TOP')
-
-    return odds_json
-
-
-if __name__ == '__main__':
-
-    odds_response = requests.get(f"https://api.the-odds-api.com/v4/sports/{SPORT}/odds", params={
-        'api_key': API_KEY,
-        'regions': REGIONS,
-        'markets': MARKETS,
-        'oddsFormat': ODDS_FORMAT,
-        'dateFormat': DATE_FORMAT,
-    })
-
-    if odds_response.status_code != 200:
-        print(
-            f'Failed to get odds: status_code {odds_response.status_code}, response body {odds_response.text}')
-
-    else:
-        odds_json = odds_response.json()
-        print('STO NEL MAIN')
-        with open("arbitrage.json", "w") as f:
-            json.dump(arb(odds_json), f)
+        odds_json = odd_response.json()
+        return odds_json
